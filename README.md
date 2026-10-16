@@ -20,17 +20,31 @@ A modern, responsive React web app built for gym lifters to track sets, reps, we
   - Can be minimized to a floating pill while logging sets.
 - ⚙️ **Customization & Data Safety**:
   - Switch between **kg** and **lbs**.
-  - 100% offline persistence using browser `localStorage`.
+- Per-account cloud storage for workouts, custom exercises, and training preferences in Neon Postgres.
   - JSON Data Export and Import / Backup & Restore.
 
 ## Getting Started
 
-1. Open a terminal in this directory:
-   ```bash
-   cd C:\Users\e\.gemini\antigravity\scratch\workout-tracker
+1. Install dependencies with `npm install`.
+2. Configure the server environment in `.env`:
+   ```env
+   NEON_DATABASE_URL=your-Neon-Postgres-connection-string
+   NEON_AUTH_URL=your-Neon-Auth-base-URL
    ```
-2. Start the development server:
+   Keep this file private. It is ignored by Git. The server uses the database URL; the browser reaches Neon Auth through the local API proxy.
+3. Start the app and API together:
    ```bash
    npm run dev
    ```
-3. Open your browser at [http://localhost:5173/](http://localhost:5173/)
+4. Open [http://localhost:5173/](http://localhost:5173/).
+
+The API creates the `workout_user_data` table on startup. Each request verifies the Neon Auth JWT and uses the signed-in user's ID for database reads and writes. No user ID supplied by the browser is trusted. Auth routes are limited to 20 attempts per 15 minutes per client IP; API routes are limited to 120 requests per minute per client IP. The limiter uses in-memory counters for a single API process. If deploying behind a trusted reverse proxy, set `TRUST_PROXY=true` so client IP limits use the forwarded address.
+
+For production, build and run the same Node server:
+
+```bash
+npm run build
+npm start
+```
+
+Set `NODE_ENV=production`, `NEON_DATABASE_URL`, and `NEON_AUTH_URL` in the host environment. Configure the Neon Auth app's allowed origins and email delivery settings for the deployment domain to enable registration, verification, and password reset links.

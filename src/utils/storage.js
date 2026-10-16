@@ -4,7 +4,6 @@ const STORAGE_KEYS = {
   WORKOUTS: 'gym_tracker_workouts_v1',
   CUSTOM_EXERCISES: 'gym_tracker_custom_exercises_v1',
   SETTINGS: 'gym_tracker_settings_v1',
-  INITIALIZED: 'gym_tracker_initialized_v1',
 };
 
 // Return YYYY-MM-DD from Date object
@@ -64,6 +63,7 @@ export function getCustomExercises() {
 export function saveCustomExercises(customExercises) {
   try {
     localStorage.setItem(STORAGE_KEYS.CUSTOM_EXERCISES, JSON.stringify(customExercises));
+    window.dispatchEvent(new CustomEvent('form:custom-exercises', { detail: customExercises }));
   } catch (err) {
     console.error('Failed to save custom exercises:', err);
   }
@@ -233,152 +233,18 @@ export function calculateMonthlyStats(allWorkouts, year, month) {
   };
 }
 
-// Seed sample data for first-time user so calendar is immediately informative
-export function initSeedDataIfEmpty() {
-  const isInit = localStorage.getItem(STORAGE_KEYS.INITIALIZED);
-  if (isInit) return;
-
-  const today = new Date();
-  const makeDate = (offsetDays) => {
-    const d = new Date(today);
-    d.setDate(d.getDate() + offsetDays);
-    return formatDateKey(d);
-  };
-
-  const sampleWorkouts = {
-    [makeDate(-4)]: {
-      id: `workout_${makeDate(-4)}`,
-      date: makeDate(-4),
-      name: 'Leg Day & Core',
-      notes: 'Hit a solid depth on squats. Good energy.',
-      exercises: [
-        {
-          exerciseId: 'ex_barbell_squat',
-          exerciseName: 'Barbell Back Squat',
-          category: 'Legs',
-          sets: [
-            { id: 's1', reps: 10, weight: 60, isCompleted: true, type: 'warmup' },
-            { id: 's2', reps: 8, weight: 90, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 8, weight: 95, isCompleted: true, type: 'normal' },
-            { id: 's4', reps: 6, weight: 100, isCompleted: true, type: 'normal' }
-          ]
-        },
-        {
-          exerciseId: 'ex_rdl',
-          exerciseName: 'Romanian Deadlift (RDL)',
-          category: 'Legs',
-          sets: [
-            { id: 's1', reps: 10, weight: 70, isCompleted: true, type: 'normal' },
-            { id: 's2', reps: 10, weight: 75, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 8, weight: 80, isCompleted: true, type: 'normal' }
-          ]
-        },
-        {
-          exerciseId: 'ex_hanging_leg_raise',
-          exerciseName: 'Hanging Leg Raise',
-          category: 'Core',
-          sets: [
-            { id: 's1', reps: 15, weight: 0, isCompleted: true, type: 'normal' },
-            { id: 's2', reps: 12, weight: 0, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 12, weight: 0, isCompleted: true, type: 'normal' }
-          ]
-        }
-      ]
-    },
-    [makeDate(-2)]: {
-      id: `workout_${makeDate(-2)}`,
-      date: makeDate(-2),
-      name: 'Push Day (Chest, Shoulders, Triceps)',
-      notes: 'Felt great pump on incline press and rope pushdowns.',
-      exercises: [
-        {
-          exerciseId: 'ex_bench_press',
-          exerciseName: 'Barbell Bench Press',
-          category: 'Chest',
-          sets: [
-            { id: 's1', reps: 12, weight: 50, isCompleted: true, type: 'warmup' },
-            { id: 's2', reps: 8, weight: 80, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 8, weight: 85, isCompleted: true, type: 'normal' },
-            { id: 's4', reps: 6, weight: 90, isCompleted: true, type: 'normal' }
-          ]
-        },
-        {
-          exerciseId: 'ex_incline_db_press',
-          exerciseName: 'Incline Dumbbell Press',
-          category: 'Chest',
-          sets: [
-            { id: 's1', reps: 10, weight: 28, isCompleted: true, type: 'normal' },
-            { id: 's2', reps: 10, weight: 30, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 8, weight: 32, isCompleted: true, type: 'normal' }
-          ]
-        },
-        {
-          exerciseId: 'ex_lateral_raise',
-          exerciseName: 'Dumbbell Lateral Raise',
-          category: 'Shoulders',
-          sets: [
-            { id: 's1', reps: 15, weight: 12, isCompleted: true, type: 'normal' },
-            { id: 's2', reps: 14, weight: 12, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 12, weight: 14, isCompleted: true, type: 'drop' }
-          ]
-        },
-        {
-          exerciseId: 'ex_tricep_rope_pushdown',
-          exerciseName: 'Tricep Rope Pushdown',
-          category: 'Arms',
-          sets: [
-            { id: 's1', reps: 12, weight: 25, isCompleted: true, type: 'normal' },
-            { id: 's2', reps: 12, weight: 27.5, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 10, weight: 30, isCompleted: true, type: 'normal' }
-          ]
-        }
-      ]
-    },
-    [makeDate(0)]: {
-      id: `workout_${makeDate(0)}`,
-      date: makeDate(0),
-      name: 'Pull Day (Back & Biceps)',
-      notes: 'Strong deadlifts today! Ready to crush the week.',
-      exercises: [
-        {
-          exerciseId: 'ex_deadlift',
-          exerciseName: 'Barbell Deadlift',
-          category: 'Back',
-          sets: [
-            { id: 's1', reps: 8, weight: 80, isCompleted: true, type: 'warmup' },
-            { id: 's2', reps: 5, weight: 120, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 5, weight: 130, isCompleted: true, type: 'normal' },
-            { id: 's4', reps: 4, weight: 140, isCompleted: true, type: 'normal' }
-          ]
-        },
-        {
-          exerciseId: 'ex_pullups',
-          exerciseName: 'Pull-Ups / Chin-Ups',
-          category: 'Back',
-          sets: [
-            { id: 's1', reps: 10, weight: 0, isCompleted: true, type: 'normal' },
-            { id: 's2', reps: 9, weight: 0, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 8, weight: 0, isCompleted: true, type: 'normal' }
-          ]
-        },
-        {
-          exerciseId: 'ex_barbell_curl',
-          exerciseName: 'Barbell Bicep Curl',
-          category: 'Arms',
-          sets: [
-            { id: 's1', reps: 12, weight: 30, isCompleted: true, type: 'normal' },
-            { id: 's2', reps: 10, weight: 35, isCompleted: true, type: 'normal' },
-            { id: 's3', reps: 8, weight: 35, isCompleted: true, type: 'normal' }
-          ]
-        }
-      ]
-    }
-  };
-
-  saveStoredWorkouts(sampleWorkouts);
-  localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
+// Keep real sessions, while removing the exact demo sessions created by older versions.
+export function cleanDemoWorkouts() {
+  const demoNames = new Map([
+    ['Hit a solid depth on squats. Good energy.', 'Leg Day & Core'],
+    ['Felt great pump on incline press and rope pushdowns.', 'Push Day (Chest, Shoulders, Triceps)'],
+    ['Strong deadlifts today! Ready to crush the week.', 'Pull Day (Back & Biceps)']
+  ]);
+  const workouts = getStoredWorkouts();
+  const cleaned = Object.fromEntries(Object.entries(workouts).filter(([, workout]) => !workout || !demoNames.has(workout.notes) || demoNames.get(workout.notes) !== workout.name));
+  if (Object.keys(cleaned).length !== Object.keys(workouts).length) saveStoredWorkouts(cleaned);
+  return cleaned;
 }
-
 // Reset / Clear / Export
 export function exportDataAsJSON() {
   const data = {
@@ -406,5 +272,4 @@ export function importDataFromJSON(jsonString) {
 export function clearAllData() {
   localStorage.removeItem(STORAGE_KEYS.WORKOUTS);
   localStorage.removeItem(STORAGE_KEYS.CUSTOM_EXERCISES);
-  localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
 }

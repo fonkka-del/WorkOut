@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import { X, Settings, Download, Upload, Trash2, RotateCcw, Check, Sparkles, AlertTriangle } from 'lucide-react';
-import { exportDataAsJSON, importDataFromJSON, clearAllData, initSeedDataIfEmpty, getSettings, saveSettings } from '../utils/storage';
+import { X, Settings, Download, Upload, Trash2, LogOut } from 'lucide-react';
 
 export default function SettingsModal({
   isOpen,
   onClose,
   settings,
   onUpdateSettings,
-  onReloadData
+  onSignOut,
+  data,
+  onImportData,
+  onClearData,
 }) {
   const [importStatus, setImportStatus] = useState('');
 
   if (!isOpen) return null;
 
   const handleExport = () => {
-    const jsonStr = exportDataAsJSON();
+    const jsonStr = JSON.stringify({ version: '1.0', exportedAt: new Date().toISOString(), ...data }, null, 2);
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -32,34 +34,21 @@ export default function SettingsModal({
     reader.onload = (event) => {
       try {
         const content = event.target?.result;
-        const res = importDataFromJSON(content);
-        if (res.success) {
-          setImportStatus('Data imported successfully!');
-          onReloadData();
-          setTimeout(() => setImportStatus(''), 3000);
-        } else {
-          setImportStatus(`Import failed: ${res.error}`);
-        }
-      } catch (err) {
+        const parsed = JSON.parse(content);
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Backup file must contain a JSON object.');
+        onImportData(parsed);
+        setImportStatus('Data imported and saved to your account.');
+        setTimeout(() => setImportStatus(''), 3000);
+      } catch {
         setImportStatus('Failed to read backup file.');
       }
     };
     reader.readAsText(file);
   };
 
-  const handleResetSampleData = () => {
-    if (confirm('Replace current data with sample workout sessions?')) {
-      localStorage.removeItem('gym_tracker_initialized_v1');
-      initSeedDataIfEmpty();
-      onReloadData();
-      onClose();
-    }
-  };
-
   const handleClearAll = () => {
     if (confirm('Are you sure you want to delete ALL workout history? This cannot be undone.')) {
-      clearAllData();
-      onReloadData();
+      onClearData();
       onClose();
     }
   };
@@ -181,19 +170,15 @@ export default function SettingsModal({
 
             <div className="flex items-center justify-between gap-3 pt-2">
               <button
-                onClick={handleResetSampleData}
-                className="text-xs text-zinc-400 hover:text-emerald-400 flex items-center gap-1.5 transition"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Load Sample Data</span>
-              </button>
-
-              <button
                 onClick={handleClearAll}
                 className="text-xs text-red-400/80 hover:text-red-400 flex items-center gap-1.5 transition"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Clear All Workouts</span>
+              </button>
+              <button onClick={onSignOut} className="settings-signout">
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign out</span>
               </button>
             </div>
           </div>
