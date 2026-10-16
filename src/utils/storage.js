@@ -144,11 +144,10 @@ export function getExerciseHistory(exerciseId, allWorkouts, currentDateKey = nul
 // Compute stats for a given workout day
 export function calculateWorkoutStats(workout) {
   if (!workout || !workout.exercises || workout.exercises.length === 0) {
-    return { totalExercises: 0, totalSets: 0, completedSets: 0, totalReps: 0, totalVolume: 0 };
+    return { totalExercises: 0, totalSets: 0, totalReps: 0, totalVolume: 0 };
   }
 
   let totalSets = 0;
-  let completedSets = 0;
   let totalReps = 0;
   let totalVolume = 0;
 
@@ -157,9 +156,6 @@ export function calculateWorkoutStats(workout) {
       totalSets += 1;
       const reps = parseInt(set.reps, 10) || 0;
       const weight = parseFloat(set.weight) || 0;
-      if (set.isCompleted) {
-        completedSets += 1;
-      }
       totalReps += reps;
       totalVolume += weight * reps;
     });
@@ -168,7 +164,6 @@ export function calculateWorkoutStats(workout) {
   return {
     totalExercises: workout.exercises.length,
     totalSets,
-    completedSets,
     totalReps,
     totalVolume: Math.round(totalVolume)
   };

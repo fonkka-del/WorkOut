@@ -46,18 +46,6 @@ export default function App() {
     };
     setWorkouts(updatedMap);
     saveStoredWorkouts(updatedMap);
-
-    // Check if all sets completed
-    const allSetsCompleted =
-      updatedWorkout.exercises?.length > 0 &&
-      updatedWorkout.exercises.every(ex => ex.sets?.length > 0 && ex.sets.every(s => s.isCompleted));
-    if (allSetsCompleted) {
-      confetti({
-        particleCount: 60,
-        spread: 60,
-        origin: { y: 0.8 }
-      });
-    }
   };
 
   const handleAddExerciseToWorkout = (exercise) => {
