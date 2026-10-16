@@ -1,14 +1,16 @@
 import React from 'react';
-import { Dumbbell, Settings, Flame, Timer, Plus } from 'lucide-react';
+import { Dumbbell, Settings, Flame, Timer, Plus, Sun, Moon } from 'lucide-react';
 
 export default function Header({
   onOpenSettings,
   onOpenTimer,
   onOpenAddExercise,
-  streakCount = 0
+  streakCount = 0,
+  theme = 'dark',
+  onToggleTheme
 }) {
   return (
-    <header className="sticky top-0 z-30 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/80 px-4 sm:px-6 py-3">
+    <header className="sticky top-0 z-30 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/80 px-4 sm:px-6 py-3 transition-colors">
       <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
         {/* Brand */}
         <div className="flex items-center gap-2.5">
@@ -41,11 +43,24 @@ export default function Header({
           {/* Quick Create Custom Exercise */}
           <button
             onClick={onOpenAddExercise}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-750 text-zinc-200 border border-zinc-700/80 rounded-xl text-xs font-semibold transition"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-750 text-zinc-200 border border-zinc-750 rounded-xl text-xs font-semibold transition"
             title="Create Custom Exercise"
           >
             <Plus className="w-3.5 h-3.5 text-emerald-400" />
             <span>New Exercise</span>
+          </button>
+
+          {/* Theme Toggle Button (Light / Dark Mode) */}
+          <button
+            onClick={onToggleTheme}
+            className="p-2 bg-zinc-850 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-750 rounded-xl transition"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-indigo-400" />
+            )}
           </button>
 
           {/* Rest Timer */}

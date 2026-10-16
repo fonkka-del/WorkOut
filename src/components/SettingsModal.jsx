@@ -98,6 +98,37 @@ export default function SettingsModal({
             </div>
           )}
 
+          {/* Theme selection */}
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">
+              Appearance / Theme
+            </label>
+            <div className="grid grid-cols-2 gap-2 bg-zinc-850 p-1 rounded-xl border border-zinc-800">
+              <button
+                type="button"
+                onClick={() => onUpdateSettings({ ...settings, theme: 'dark' })}
+                className={`py-2 text-xs font-bold rounded-lg transition ${
+                  settings.theme !== 'light'
+                    ? 'bg-zinc-800 text-white shadow-md'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                🌙 Dark Mode
+              </button>
+              <button
+                type="button"
+                onClick={() => onUpdateSettings({ ...settings, theme: 'light' })}
+                className={`py-2 text-xs font-bold rounded-lg transition ${
+                  settings.theme === 'light'
+                    ? 'bg-white text-zinc-950 shadow-md'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                ☀️ Light Mode
+              </button>
+            </div>
+          </div>
+
           {/* Unit selection */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">
@@ -109,7 +140,7 @@ export default function SettingsModal({
                 onClick={() => onUpdateSettings({ ...settings, unit: 'kg' })}
                 className={`py-2 text-xs font-bold rounded-lg transition ${
                   settings.unit === 'kg'
-                    ? 'bg-emerald-500 text-zinc-950 shadow-md shadow-emerald-500/20'
+                    ? 'bg-zinc-800 text-white shadow-md'
                     : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
@@ -120,7 +151,7 @@ export default function SettingsModal({
                 onClick={() => onUpdateSettings({ ...settings, unit: 'lbs' })}
                 className={`py-2 text-xs font-bold rounded-lg transition ${
                   settings.unit === 'lbs'
-                    ? 'bg-emerald-500 text-zinc-950 shadow-md shadow-emerald-500/20'
+                    ? 'bg-zinc-800 text-white shadow-md'
                     : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >

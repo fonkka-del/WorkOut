@@ -39,6 +39,23 @@ export default function App() {
     setWorkouts(stored);
   }, []);
 
+  // Sync theme with document class (light vs dark)
+  useEffect(() => {
+    const root = document.documentElement;
+    if (settings.theme === 'light') {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    } else {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    }
+  }, [settings.theme]);
+
+  const handleToggleTheme = () => {
+    const nextTheme = settings.theme === 'light' ? 'dark' : 'light';
+    handleUpdateSettings({ ...settings, theme: nextTheme });
+  };
+
   const handleUpdateWorkout = (updatedWorkout) => {
     const updatedMap = {
       ...workouts,
@@ -123,6 +140,8 @@ export default function App() {
         onOpenTimer={() => setIsTimerOpen(true)}
         onOpenAddExercise={() => setIsAddExerciseOpen(true)}
         streakCount={monthlyStats.currentStreak}
+        theme={settings.theme || 'dark'}
+        onToggleTheme={handleToggleTheme}
       />
 
       {/* Main Content Area - with pb-24 for bottom navbar clearance */}

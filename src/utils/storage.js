@@ -78,10 +78,10 @@ export function getAllExercises() {
 export function getSettings() {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-    if (!raw) return { unit: 'kg', restTimerSeconds: 90, autoTimer: true };
-    return { unit: 'kg', restTimerSeconds: 90, autoTimer: true, ...JSON.parse(raw) };
+    if (!raw) return { unit: 'kg', restTimerSeconds: 90, autoTimer: true, theme: 'dark' };
+    return { unit: 'kg', restTimerSeconds: 90, autoTimer: true, theme: 'dark', ...JSON.parse(raw) };
   } catch {
-    return { unit: 'kg', restTimerSeconds: 90, autoTimer: true };
+    return { unit: 'kg', restTimerSeconds: 90, autoTimer: true, theme: 'dark' };
   }
 }
 
