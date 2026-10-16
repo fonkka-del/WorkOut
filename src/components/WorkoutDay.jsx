@@ -313,14 +313,14 @@ export default function WorkoutDay({
 
                 {/* Sets Table - No radio buttons or planning colors */}
                 <div className="overflow-x-auto -mx-1 sm:mx-0">
-                  <table className="w-full text-left text-xs min-w-[280px]">
+                  <table className="w-full text-left text-xs">
                     <thead>
                       <tr className="text-zinc-500 uppercase tracking-wider text-[10px] border-b border-zinc-800/80">
-                        <th className="py-2 px-2 w-12 text-center">Set</th>
-                        <th className="py-2 px-2 w-28">Type</th>
-                        <th className="py-2 px-2">{unit.toUpperCase()}</th>
-                        <th className="py-2 px-2">Reps</th>
-                        <th className="py-2 px-2 w-16 text-right"></th>
+                        <th className="py-1.5 px-1 w-8 sm:w-10 text-center">#</th>
+                        <th className="py-1.5 px-1 sm:px-2">Type</th>
+                        <th className="py-1.5 px-1 sm:px-2 w-14 sm:w-16 text-center">{unit.toUpperCase()}</th>
+                        <th className="py-1.5 px-1 sm:px-2 w-12 sm:w-14 text-center">Reps</th>
+                        <th className="py-1.5 px-1 w-14 text-right"></th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800/40">
@@ -331,28 +331,28 @@ export default function WorkoutDay({
                             className="hover:bg-zinc-850/40 transition"
                           >
                             {/* Set Number */}
-                            <td className="py-2 px-2 text-center">
-                              <span className="inline-flex items-center justify-center w-6 h-6 rounded-md text-xs font-semibold bg-zinc-800 text-zinc-300">
+                            <td className="py-2 px-1 text-center">
+                              <span className="inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded text-[11px] sm:text-xs font-semibold bg-zinc-800 text-zinc-300">
                                 {setIdx + 1}
                               </span>
                             </td>
 
-                            {/* Set Type */}
-                            <td className="py-2 px-2">
+                            {/* Set Type Dropdown */}
+                            <td className="py-2 px-1 sm:px-2">
                               <select
                                 value={set.type || 'normal'}
                                 onChange={(e) => handleUpdateSet(exIdx, setIdx, 'type', e.target.value)}
-                                className="w-full px-2 py-1.5 bg-zinc-850 border border-zinc-750 rounded-lg text-xs text-zinc-300 focus:outline-none focus:border-zinc-500"
+                                className="w-full min-w-[72px] sm:min-w-[90px] px-1 sm:px-2 py-1 sm:py-1.5 bg-zinc-850 border border-zinc-750 rounded-lg text-[11px] sm:text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 font-medium"
                               >
                                 <option value="normal">Normal</option>
                                 <option value="warmup">Warmup</option>
-                                <option value="drop">Drop Set</option>
+                                <option value="drop">Drop</option>
                                 <option value="failure">Failure</option>
                               </select>
                             </td>
 
-                            {/* Weight */}
-                            <td className="py-2 px-2">
+                            {/* Weight (Decreased textbox size for mobile) */}
+                            <td className="py-2 px-1 sm:px-2 text-center">
                               <input
                                 type="number"
                                 step="any"
@@ -360,35 +360,35 @@ export default function WorkoutDay({
                                 placeholder="0"
                                 value={set.weight === 0 ? '0' : (set.weight || '')}
                                 onChange={(e) => handleUpdateSet(exIdx, setIdx, 'weight', e.target.value)}
-                                className="w-20 px-2 py-1.5 bg-zinc-850 border border-zinc-750 rounded-lg text-xs font-semibold text-white focus:outline-none text-center focus:border-zinc-500"
+                                className="w-14 sm:w-16 px-1 sm:px-2 py-1 sm:py-1.5 bg-zinc-850 border border-zinc-750 rounded-lg text-xs font-semibold text-white focus:outline-none text-center focus:border-zinc-500"
                               />
                             </td>
 
                             {/* Reps */}
-                            <td className="py-2 px-2">
+                            <td className="py-2 px-1 sm:px-2 text-center">
                               <input
                                 type="number"
                                 min="0"
                                 placeholder="0"
                                 value={set.reps === 0 ? '0' : (set.reps || '')}
                                 onChange={(e) => handleUpdateSet(exIdx, setIdx, 'reps', e.target.value)}
-                                className="w-16 px-2 py-1.5 bg-zinc-850 border border-zinc-750 rounded-lg text-xs font-semibold text-white focus:outline-none text-center focus:border-zinc-500"
+                                className="w-12 sm:w-14 px-1 sm:px-2 py-1 sm:py-1.5 bg-zinc-850 border border-zinc-750 rounded-lg text-xs font-semibold text-white focus:outline-none text-center focus:border-zinc-500"
                               />
                             </td>
 
                             {/* Actions: Duplicate & Delete */}
-                            <td className="py-2 px-2 text-right">
-                              <div className="flex items-center justify-end gap-1.5">
+                            <td className="py-2 px-1 text-right">
+                              <div className="flex items-center justify-end gap-1">
                                 <button
                                   onClick={() => handleDuplicateSet(exIdx, setIdx)}
-                                  className="p-1.5 text-zinc-500 hover:text-zinc-200 rounded hover:bg-zinc-800 transition"
+                                  className="p-1 text-zinc-500 hover:text-zinc-200 rounded hover:bg-zinc-800 transition"
                                   title="Duplicate set"
                                 >
                                   <Copy className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => handleRemoveSet(exIdx, setIdx)}
-                                  className="p-1.5 text-zinc-500 hover:text-red-400 rounded hover:bg-zinc-800 transition"
+                                  className="p-1 text-zinc-500 hover:text-red-400 rounded hover:bg-zinc-800 transition"
                                   title="Delete set"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
