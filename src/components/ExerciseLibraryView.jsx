@@ -34,7 +34,7 @@ export default function ExerciseLibraryView({
   const customCount = allExercises.filter(e => e.isCustom).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-3xl mx-auto pb-6">
       {/* Top Banner */}
       <div className="bg-gradient-to-r from-zinc-900 via-zinc-850 to-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">

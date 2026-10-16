@@ -62,7 +62,7 @@ export default function RestTimer({ initialSeconds = 90, onFinish, isOpen, setIs
     return (
       <button
         onClick={() => { setIsOpen(true); setIsMinimized(false); }}
-        className="fixed bottom-5 right-5 z-40 bg-zinc-800 hover:bg-zinc-700 text-amber-400 border border-amber-500/40 p-3 rounded-full shadow-2xl flex items-center gap-2 group transition-all"
+        className="fixed bottom-20 right-4 sm:right-6 z-40 bg-zinc-800 hover:bg-zinc-750 text-amber-400 border border-amber-500/40 p-3 rounded-full shadow-2xl flex items-center gap-2 group transition-all"
         title="Open Rest Timer"
       >
         <Timer className="w-5 h-5 group-hover:rotate-12 transition-transform" />
@@ -73,7 +73,7 @@ export default function RestTimer({ initialSeconds = 90, onFinish, isOpen, setIs
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-5 right-5 z-40 bg-zinc-900 border border-zinc-700/80 shadow-2xl rounded-2xl p-2.5 flex items-center gap-3 backdrop-blur-md">
+      <div className="fixed bottom-20 right-4 sm:right-6 z-40 bg-zinc-900 border border-zinc-700/80 shadow-2xl rounded-2xl p-2.5 flex items-center gap-3 backdrop-blur-md">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsMinimized(false)}>
           <div className={`p-2 rounded-xl ${isRunning ? 'bg-amber-500/20 text-amber-400 animate-pulse' : 'bg-zinc-800 text-zinc-400'}`}>
             <Timer className="w-4 h-4" />
@@ -105,7 +105,7 @@ export default function RestTimer({ initialSeconds = 90, onFinish, isOpen, setIs
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 w-80 bg-zinc-900/95 border border-zinc-700/80 rounded-2xl p-4 shadow-2xl backdrop-blur-md">
+    <div className="fixed bottom-20 right-4 sm:right-6 z-40 w-80 max-w-[calc(100vw-2rem)] bg-zinc-900/95 border border-zinc-700/80 rounded-2xl p-4 shadow-2xl backdrop-blur-md">
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
         <div className="flex items-center gap-2">

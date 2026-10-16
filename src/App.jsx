@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import Header from './components/Header';
+import BottomNav from './components/BottomNav';
 import CalendarView from './components/CalendarView';
 import WorkoutDay from './components/WorkoutDay';
+import NotesView from './components/NotesView';
 import ExerciseLibraryView from './components/ExerciseLibraryView';
 import ExerciseSelectorModal from './components/ExerciseSelectorModal';
 import AddExerciseModal from './components/AddExerciseModal';
@@ -21,7 +23,7 @@ import {
 export default function App() {
   const [workouts, setWorkouts] = useState({});
   const [selectedDate, setSelectedDate] = useState(() => formatDateKey(new Date()));
-  const [activeTab, setActiveTab] = useState('workout'); // 'workout' | 'library'
+  const [activeTab, setActiveTab] = useState('workout'); // 'workout' | 'calendar' | 'notes' | 'exercises'
   const [settings, setSettings] = useState(() => getSettings());
 
   // Modals state
@@ -92,7 +94,6 @@ export default function App() {
   };
 
   const handleExerciseCreated = (newExercise) => {
-    // Automatically offer to add it to current workout if selector was opened from day view
     handleAddExerciseToWorkout(newExercise);
   };
 
@@ -106,7 +107,20 @@ export default function App() {
     saveSettings(newSettings);
   };
 
+  const handleGoToWorkout = (dateKey) => {
+    setSelectedDate(dateKey);
+    setActiveTab('workout');
+  };
+
+  const handleGoToNotes = (dateKey) => {
+    setSelectedDate(dateKey);
+    setActiveTab('notes');
+  };
+
   const currentWorkout = workouts[selectedDate];
+  const todayKey = formatDateKey(new Date());
+  const hasTodayWorkout = workouts[todayKey]?.exercises?.length > 0;
+
   const monthlyStats = calculateMonthlyStats(
     workouts,
     new Date(selectedDate).getFullYear(),
@@ -115,46 +129,55 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-zinc-950">
-      {/* Header */}
+      {/* Top Header */}
       <Header
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenTimer={() => setIsTimerOpen(true)}
         onOpenAddExercise={() => setIsAddExerciseOpen(true)}
         streakCount={monthlyStats.currentStreak}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-        {activeTab === 'workout' ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column: Calendar & Monthly Consistency */}
-            <div className="lg:col-span-5 space-y-6">
-              <CalendarView
-                allWorkouts={workouts}
-                selectedDate={selectedDate}
-                onSelectDate={(newDate) => setSelectedDate(newDate)}
-                unit={settings.unit}
-              />
-            </div>
+      {/* Main Content Area - with pb-24 for bottom navbar clearance */}
+      <main className="flex-1 max-w-4xl w-full mx-auto p-3 sm:p-6 pb-28">
+        {/* Tab 1: Workout Logger */}
+        {activeTab === 'workout' && (
+          <WorkoutDay
+            dateKey={selectedDate}
+            workout={currentWorkout}
+            allWorkouts={workouts}
+            onUpdateWorkout={handleUpdateWorkout}
+            onOpenExerciseSelector={() => setIsExerciseSelectorOpen(true)}
+            onStartRestTimer={() => setIsTimerOpen(true)}
+            onNavigateDate={(newDate) => setSelectedDate(newDate)}
+            onGoToNotes={handleGoToNotes}
+            unit={settings.unit}
+          />
+        )}
 
-            {/* Right Column: Workout Day Editor */}
-            <div className="lg:col-span-7 space-y-6">
-              <WorkoutDay
-                dateKey={selectedDate}
-                workout={currentWorkout}
-                allWorkouts={workouts}
-                onUpdateWorkout={handleUpdateWorkout}
-                onOpenExerciseSelector={() => setIsExerciseSelectorOpen(true)}
-                onStartRestTimer={() => setIsTimerOpen(true)}
-                onNavigateDate={(newDate) => setSelectedDate(newDate)}
-                unit={settings.unit}
-              />
-            </div>
-          </div>
-        ) : (
-          /* Exercise Library Tab */
+        {/* Tab 2: Monthly Calendar */}
+        {activeTab === 'calendar' && (
+          <CalendarView
+            allWorkouts={workouts}
+            selectedDate={selectedDate}
+            onSelectDate={(newDate) => setSelectedDate(newDate)}
+            onGoToWorkout={handleGoToWorkout}
+            unit={settings.unit}
+          />
+        )}
+
+        {/* Tab 3: Workout Notes & Journal */}
+        {activeTab === 'notes' && (
+          <NotesView
+            selectedDate={selectedDate}
+            onSelectDate={(newDate) => setSelectedDate(newDate)}
+            workouts={workouts}
+            onUpdateWorkout={handleUpdateWorkout}
+            onGoToWorkout={handleGoToWorkout}
+          />
+        )}
+
+        {/* Tab 4: Exercise Library */}
+        {activeTab === 'exercises' && (
           <ExerciseLibraryView
             allWorkouts={workouts}
             onOpenCreateExercise={() => setIsAddExerciseOpen(true)}
@@ -166,6 +189,13 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* Bottom Navigation Bar */}
+      <BottomNav
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        hasTodayWorkout={hasTodayWorkout}
+      />
 
       {/* Floating Rest Timer */}
       <RestTimer
